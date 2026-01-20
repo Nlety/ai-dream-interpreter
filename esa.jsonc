@@ -1,15 +1,7 @@
 {
     "name": "ai-dream-interpreter",
-    "routes": [
-        {
-            "path": "/api/dream-storage",
-            "function": "dream-storage"
-        }
-    ],
-    "functions": [
-        {
-            "name": "dream-storage",
-            "entry": "edge-functions/dream-storage.js"
-        }
-    ]
+    "entry": "./edge-functions/dream-storage.js",
+    "assets": {
+        "directory": "./"
+    }
 }
