@@ -1,0 +1,11 @@
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+#settings-modal.show {
+    display: flex;
+}
+
+#history-panel.open {
+    transform: translateX(0);
+}

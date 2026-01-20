@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 解梦大师 - AI Dream Interpreter</title>
+    <meta name="description" content="AI驱动的梦境解读助手">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 font-sans text-white">
+    <div id="app" class="min-h-screen flex flex-col">
+        <header class="px-6 py-4 backdrop-blur-sm bg-indigo-900/50 border-b border-purple-700/30 sticky top-0 z-50">
+            <div class="max-w-4xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1
+                            class="text-xl font-bold bg-gradient-to-r from-indigo-300 to-purple-300 bg-clip-text text-transparent">
+                            AI 解梦大师</h1>
+                        <p class="text-xs text-purple-400">AI Dream Interpreter</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="btn-history"
+                        class="p-2 bg-purple-800/50 hover:bg-purple-700/50 rounded-xl transition-all" title="梦境记录"><svg
+                            class="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg></button>
+                    <button id="btn-settings"
+                        class="p-2 bg-purple-800/50 hover:bg-purple-700/50 rounded-xl transition-all" title="设置"><svg
+                            class="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 max-w-4xl mx-auto w-full p-6">
+            <div class="bg-indigo-900/30 backdrop-blur-sm rounded-3xl border border-purple-700/30 p-6 mb-6">
+                <div class="text-center mb-6">
+                    <div
+                        class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full flex items-center justify-center">
+                        <span class="text-4xl">🌙</span></div>
+                    <p class="text-purple-300/70">描述你的梦境，AI 为你解读其中的深意</p>
+                </div>
+                <div class="mb-4"><label class="block text-sm font-medium text-purple-200 mb-2">💭
+                        描述你的梦境</label><textarea id="dream-input" placeholder="尽可能详细地描述你的梦境内容、场景、人物、情感..." rows="5"
+                        class="w-full px-4 py-3 bg-purple-900/30 border border-purple-700/50 rounded-xl text-white placeholder-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div><label class="block text-sm font-medium text-purple-200 mb-1">😴 梦境情绪</label><select id="mood"
+                            class="w-full px-4 py-2 bg-purple-900/30 border border-purple-700/50 rounded-xl text-purple-200 focus:ring-2 focus:ring-purple-500">
+                            <option value="">请选择</option>
+                            <option value="happy">愉快平和</option>
+                            <option value="anxious">紧张焦虑</option>
+                            <option value="scared">恐惧害怕</option>
+                            <option value="sad">悲伤失落</option>
+                            <option value="confused">困惑迷茫</option>
+                            <option value="exciting">兴奋刺激</option>
+                        </select></div>
+                    <div><label class="block text-sm font-medium text-purple-200 mb-1">🔮 解读角度</label><select id="style"
+                            class="w-full px-4 py-2 bg-purple-900/30 border border-purple-700/50 rounded-xl text-purple-200 focus:ring-2 focus:ring-purple-500">
+                            <option value="psychology">心理分析</option>
+                            <option value="traditional">传统周公解梦</option>
+                            <option value="symbol">象征寓意</option>
+                            <option value="life">生活关联</option>
+                        </select></div>
+                </div>
+                <button id="btn-interpret"
+                    class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold rounded-xl shadow-lg shadow-purple-500/30 hover:shadow-xl transition-all flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    解读梦境
+                </button>
+            </div>
+
+            <div id="result-area" class="hidden">
+                <div
+                    class="bg-gradient-to-r from-indigo-900/50 to-purple-900/50 backdrop-blur-sm rounded-3xl border border-purple-700/30 overflow-hidden">
+                    <div class="p-4 border-b border-purple-700/30 flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-purple-200">🔮 梦境解读</h2><button id="btn-save"
+                            class="px-3 py-1.5 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-500">💾
+                            保存</button>
+                    </div>
+                    <div id="content" class="p-6 text-purple-100/80 leading-relaxed"></div>
+                </div>
+            </div>
+        </main>
+        <footer class="px-6 py-4 text-center text-sm text-purple-500/50">
+            <p>Powered by AI • 基于阿里云 ESA</p>
+        </footer>
+    </div>
+
+    <div id="examples-panel" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
+        <div
+            class="bg-indigo-900/90 backdrop-blur-sm rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 border border-purple-700/50">
+            <span class="text-sm text-purple-400 font-medium">常见梦境:</span>
+            <button
+                class="example-btn px-3 py-1.5 bg-purple-800/50 text-purple-300 text-sm rounded-lg hover:bg-purple-700/50"
+                data-example="fly">🦅 飞翔</button>
+            <button
+                class="example-btn px-3 py-1.5 bg-indigo-800/50 text-indigo-300 text-sm rounded-lg hover:bg-indigo-700/50"
+                data-example="fall">⬇️ 坠落</button>
+            <button
+                class="example-btn px-3 py-1.5 bg-violet-800/50 text-violet-300 text-sm rounded-lg hover:bg-violet-700/50"
+                data-example="chase">🏃 被追</button>
+            <button
+                class="example-btn px-3 py-1.5 bg-fuchsia-800/50 text-fuchsia-300 text-sm rounded-lg hover:bg-fuchsia-700/50"
+                data-example="teeth">🦷 掉牙</button>
+        </div>
+    </div>
+
+    <div id="history-panel"
+        class="fixed inset-y-0 right-0 w-80 bg-indigo-900 border-l border-purple-700/50 transform translate-x-full transition-transform duration-300 z-50">
+        <div class="p-4 border-b border-purple-700/50 flex items-center justify-between">
+            <h3 class="font-semibold text-purple-200">梦境记录</h3><button id="btn-close-history"
+                class="text-purple-400 hover:text-purple-200"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg></button>
+        </div>
+        <div id="history-list" class="p-4 space-y-3 overflow-y-auto max-h-[calc(100vh-80px)]"></div>
+    </div>
+    <div id="history-overlay" class="fixed inset-0 bg-black/50 hidden z-40"></div>
+
+    <div id="settings-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div class="bg-indigo-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 border border-purple-700/50">
+            <div class="px-6 py-4 border-b border-purple-700/50 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-purple-200">模型设置</h3><button id="btn-close-settings"
+                    class="text-purple-400 hover:text-purple-200"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div><label class="block text-sm font-medium text-purple-300 mb-1">API 地址</label><input id="api-url"
+                        type="text"
+                        class="w-full px-4 py-2 bg-purple-800/50 border border-purple-700/50 rounded-xl text-white focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div><label class="block text-sm font-medium text-purple-300 mb-1">API Key</label><input id="api-key"
+                        type="password"
+                        class="w-full px-4 py-2 bg-purple-800/50 border border-purple-700/50 rounded-xl text-white focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div><label class="block text-sm font-medium text-purple-300 mb-1">模型名称</label><input id="model-name"
+                        type="text"
+                        class="w-full px-4 py-2 bg-purple-800/50 border border-purple-700/50 rounded-xl text-white focus:ring-2 focus:ring-purple-500">
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-purple-700/50 flex justify-end gap-3"><button id="btn-cancel-settings"
+                    class="px-4 py-2 text-purple-400 rounded-xl">取消</button><button id="btn-save-settings"
+                    class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl">保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed top-6 right-6 z-50 hidden">
+        <div class="bg-indigo-900 border border-purple-700/50 rounded-xl shadow-2xl px-6 py-4 flex items-center gap-3">
+            <div id="toast-icon" class="w-8 h-8 rounded-full flex items-center justify-center"></div>
+            <div>
+                <p id="toast-title" class="font-semibold text-purple-200"></p>
+                <p id="toast-message" class="text-sm text-purple-400"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/aiService.js"></script>
+    <script src="js/storageService.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
